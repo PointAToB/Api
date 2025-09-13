@@ -30,5 +30,5 @@ class UpdateUser(Schema):
 
 # Error response
 class Error(Schema):
-    status: str = "error"
+    status: Optional[str] = "error"
     message: str

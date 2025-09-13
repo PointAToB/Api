@@ -1,7 +1,9 @@
 from http import HTTPStatus
 from typing import Union
+
+from ninja.responses import Response
 from ninja_jwt.authentication import JWTAuth
-from django.db import IntegrityError
+from django.db.utils import IntegrityError
 from django.http import HttpRequest
 from ninja import Router
 from .models import User
@@ -19,11 +21,12 @@ router = Router()
 })
 def post(request: HttpRequest, user: CreateUser):
     try:
-        user = User(first_name=user.firstName, last_name=user.lastName, email=user.email)
+        user = User(firstName=user.firstName, lastName=user.lastName, email=user.email)
         user.set_password(user.password)
         user.save()
-    except IntegrityError: return Error(message='Account already exists')
 
+        return HTTPStatus.OK, user
+    except IntegrityError: return HTTPStatus.CONFLICT, Error(message='Account with this email already exists')
 
 # Retrieve User
 @router.get('user/{uid}', auth=JWTAuth(), response={
@@ -33,7 +36,7 @@ def post(request: HttpRequest, user: CreateUser):
 def get(request: HttpRequest, uid: int):
     try:
         user = User.objects.get(id=uid)
-    except User.DoesNotExist: return Error(message="User not found")
+    except User.DoesNotExist: return Error(message='User not found')
 
     return user
 
@@ -48,15 +51,15 @@ def get(request: HttpRequest, uid: int):
 def put(request: HttpRequest, uid: int, fields: UpdateUser):
     try:
         user = User.objects.get(id=uid)
-    except User.DoesNotExist: return Error(message="User not found")
+    except User.DoesNotExist: return Error(message='User not found')
 
     _fields = { key: val for key, val in fields.dict(exclude_none=True).items() }
 
-    if not _fields: return Error(message="No fields provided to update user")
+    if not _fields: return Error(message='No fields provided to update user')
 
     try:
         User.objects.filter(id=uid).update(**_fields)
-    except IntegrityError: return Error(message="Account with this email already exists")
+    except IntegrityError: return Error(message='Account with this email already exists')
 
 
 # Delete User
@@ -68,7 +71,7 @@ def delete(request: HttpRequest, uid: int):
     try:
         user = User.objects.get(id=uid)
         user.delete()
-    except User.DoesNotExist: return Error(message="User not found")
+    except User.DoesNotExist: return Error(message='User not found')
 
     return None
 
