@@ -28,16 +28,7 @@ class UpdateUser(Schema):
     height: Optional[int] # Stored in inches
     birthDate: Optional[datetime]
 
-
 # Error response
 class Error(Schema):
     status: str = "error"
-    code: int
     message: str
-
-
-# Success response
-class Success(Schema):
-    status: str = "success"
-    code: int
-    message: Optional[str] = None
