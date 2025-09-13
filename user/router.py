@@ -44,3 +44,15 @@ def put(request: HttpRequest, uid: int, fields: UpdateUser):
     except User.DoesNotExist: return Error(code=HTTPStatus.NOT_FOUND, message="User not found")
     except IntegrityError: return Error(code=HTTPStatus.CONFLICT, message="Account with this email already exists")
 
+# Delete User
+@router.delete('user/{uid}', response=Union[Error, Success])
+def delete(request: HttpRequest, uid: int):
+    try:
+        user = User.objects.get(id=uid)
+        user.delete()
+    except User.DoesNotExist: return Error(code=HTTPStatus.NOT_FOUND, message="User not found")
+
+    return Success(code=HTTPStatus.NO_CONTENT)
+
+
+

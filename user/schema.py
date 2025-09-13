@@ -40,4 +40,4 @@ class Error(Schema):
 class Success(Schema):
     status: str = "success"
     code: int
-    message: str
+    message: Optional[str] = None
