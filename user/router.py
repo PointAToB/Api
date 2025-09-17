@@ -1,5 +1,4 @@
 from http import HTTPStatus
-from typing import Union
 from ninja_jwt.authentication import JWTAuth
 from django.db import IntegrityError
 from django.http import HttpRequest
@@ -15,14 +14,25 @@ router = Router()
 # Create User
 @router.post('user', response={
     HTTPStatus.OK: CreateUser,
-    HTTPStatus.CONFLICT: Error
+    HTTPStatus.CONFLICT: Error,
+    HTTPStatus.BAD_REQUEST: Error
 })
 def post(request: HttpRequest, user: CreateUser):
+    # Check that none of the value fields are empty strings
+    if user.firstName == '' or user.lastName == '' or user.email == '' or user.password == '':
+        return HTTPStatus.BAD_REQUEST, Error(message='Fields cannot be an empty str')
+
+    # Check if user with specified email already exists
     try:
-        user = User(first_name=user.firstName, last_name=user.lastName, email=user.email)
+        User.objects.get(email=user.email)
+    except User.DoesNotExist:
+        user = User(firstName=user.firstName, lastName=user.lastName, email=user.email)
         user.set_password(user.password)
         user.save()
-    except IntegrityError: return Error(message='Account already exists')
+        return HTTPStatus.OK, user
+
+    return HTTPStatus.CONFLICT, Error(message='Account with this email already exists')
+
 
 
 # Retrieve User
