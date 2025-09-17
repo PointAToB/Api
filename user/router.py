@@ -1,9 +1,6 @@
 from http import HTTPStatus
-from typing import Union
-
-from ninja.responses import Response
 from ninja_jwt.authentication import JWTAuth
-from django.db.utils import IntegrityError
+from django.db import IntegrityError
 from django.http import HttpRequest
 from ninja import Router
 from .models import User
@@ -17,16 +14,26 @@ router = Router()
 # Create User
 @router.post('user', response={
     HTTPStatus.OK: CreateUser,
-    HTTPStatus.CONFLICT: Error
+    HTTPStatus.CONFLICT: Error,
+    HTTPStatus.BAD_REQUEST: Error
 })
 def post(request: HttpRequest, user: CreateUser):
+    # Check that none of the value fields are empty strings
+    if user.firstName == '' or user.lastName == '' or user.email == '' or user.password == '':
+        return HTTPStatus.BAD_REQUEST, Error(message='Fields cannot be an empty str')
+
+    # Check if user with specified email already exists
     try:
+        User.objects.get(email=user.email)
+    except User.DoesNotExist:
         user = User(firstName=user.firstName, lastName=user.lastName, email=user.email)
         user.set_password(user.password)
         user.save()
-
         return HTTPStatus.OK, user
-    except IntegrityError: return HTTPStatus.CONFLICT, Error(message='Account with this email already exists')
+
+    return HTTPStatus.CONFLICT, Error(message='Account with this email already exists')
+
+
 
 # Retrieve User
 @router.get('user/{uid}', auth=JWTAuth(), response={
@@ -36,7 +43,7 @@ def post(request: HttpRequest, user: CreateUser):
 def get(request: HttpRequest, uid: int):
     try:
         user = User.objects.get(id=uid)
-    except User.DoesNotExist: return Error(message='User not found')
+    except User.DoesNotExist: return Error(message="User not found")
 
     return user
 
@@ -51,15 +58,15 @@ def get(request: HttpRequest, uid: int):
 def put(request: HttpRequest, uid: int, fields: UpdateUser):
     try:
         user = User.objects.get(id=uid)
-    except User.DoesNotExist: return Error(message='User not found')
+    except User.DoesNotExist: return Error(message="User not found")
 
     _fields = { key: val for key, val in fields.dict(exclude_none=True).items() }
 
-    if not _fields: return Error(message='No fields provided to update user')
+    if not _fields: return Error(message="No fields provided to update user")
 
     try:
         User.objects.filter(id=uid).update(**_fields)
-    except IntegrityError: return Error(message='Account with this email already exists')
+    except IntegrityError: return Error(message="Account with this email already exists")
 
 
 # Delete User
@@ -71,7 +78,7 @@ def delete(request: HttpRequest, uid: int):
     try:
         user = User.objects.get(id=uid)
         user.delete()
-    except User.DoesNotExist: return Error(message='User not found')
+    except User.DoesNotExist: return Error(message="User not found")
 
     return None
 
