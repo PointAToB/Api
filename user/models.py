@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 class UserManager(models.Manager):
     def get_by_natural_key(self, email):
         return self.get(email=email)
+
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
@@ -18,6 +19,11 @@ class User(AbstractBaseUser, PermissionsMixin):
     weight = models.IntegerField(null=True) # Weight stored in pounds.
     height = models.IntegerField(null=True) # Height stored in inches.
     birthDate = models.DateField(null=True) # Can derive age from birthDate.
+
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    is_active = models.BooleanField(default=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['firstName', 'lastName']

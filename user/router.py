@@ -13,7 +13,7 @@ router = Router()
 
 # Create User
 @router.post('user', response={
-    HTTPStatus.OK: CreateUser,
+    HTTPStatus.OK: RetrieveUser,
     HTTPStatus.CONFLICT: Error,
     HTTPStatus.BAD_REQUEST: Error
 })
@@ -36,16 +36,16 @@ def post(request: HttpRequest, user: CreateUser):
 
 
 # Retrieve User
-@router.get('user/{uid}', auth=JWTAuth(), response={
+@router.get('user', response={
     HTTPStatus.OK: RetrieveUser,
     HTTPStatus.NOT_FOUND: Error
 })
-def get(request: HttpRequest, uid: int):
+def get(request: HttpRequest):
     try:
-        user = User.objects.get(id=uid)
-    except User.DoesNotExist: return Error(message="User not found")
+        user = User.objects.get(id=request.user.id)
+    except User.DoesNotExist: return HTTPStatus.NOT_FOUND, Error(message="User not found")
 
-    return user
+    return HTTPStatus.OK, user
 
 
 # Update User

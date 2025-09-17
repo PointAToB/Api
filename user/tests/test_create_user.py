@@ -1,7 +1,6 @@
 from http import HTTPStatus
 from django.test import TestCase
 from ninja.testing import TestClient
-
 from user.models import User
 from user.router import router
 
@@ -33,7 +32,7 @@ def get_empty_str_payload():
     return payload
 
 
-class UserApiTest(TestCase):
+class UserCreateTest(TestCase):
     def setUp(self):
         self.client = TestClient(router)
 
