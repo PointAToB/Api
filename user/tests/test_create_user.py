@@ -55,11 +55,11 @@ class UserCreateTest(TestCase):
     def test_create_user_with_invalid_data(self):
         res = self.client.post('user', json=get_bad_formed_payload(), content_type="application/json")
 
-        TestCase.assertEqual(self, res.status_code, HTTPStatus.UNPROCESSABLE_CONTENT,f'Status code should have been 422, instead was {res.status_code}')
+        TestCase.assertEqual(self, res.status_code, HTTPStatus.UNPROCESSABLE_ENTITY,f'Status code should have been 422, instead was {res.status_code}')
 
         res = self.client.post('user')
 
-        TestCase.assertEqual(self, res.status_code, HTTPStatus.UNPROCESSABLE_CONTENT,f'Status code should have been 422, instead was {res.status_code}')
+        TestCase.assertEqual(self, res.status_code, HTTPStatus.UNPROCESSABLE_ENTITY,f'Status code should have been 422, instead was {res.status_code}')
 
 
     def test_create_user_with_empty_str_values(self):

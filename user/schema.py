@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Optional
+from typing import Optional, Union
 from ninja import Schema
 from pydantic import EmailStr
 
@@ -15,9 +15,9 @@ class RetrieveUser(Schema):
     firstName: str
     lastName: str
     email: EmailStr
-    weight: int # Stored in pounds
-    height: int # Stored in inches
-    birthDate: datetime
+    weight: Union[int, None] # Stored in pounds
+    height: Union[int, None] # Stored in inches
+    birthDate: Union[datetime, None]
 
 # Update user response
 class UpdateUser(Schema):
