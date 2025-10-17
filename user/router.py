@@ -26,9 +26,7 @@ def post(request: HttpRequest, user: CreateUser):
     try:
         User.objects.get(email=user.email)
     except User.DoesNotExist:
-        user = User(firstName=user.firstName, lastName=user.lastName, email=user.email)
-        user.set_password(user.password)
-        user.save()
+        user = User.objects.create_user(email=user.email, password=user.password, firstName=user.firstName, lastName=user.lastName)
         return HTTPStatus.OK, user
 
     return HTTPStatus.CONFLICT, Error(message='Account with this email already exists')
