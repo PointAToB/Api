@@ -2,3 +2,5 @@ venv
 .env
 Api.iml
 .idea/
+__pycache__/
+*.py[cod]
