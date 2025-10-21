@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'user',
     'ninja_extra',
+    'channels',
 ]
 
 MIDDLEWARE = [

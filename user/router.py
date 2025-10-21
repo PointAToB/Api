@@ -43,7 +43,7 @@ def login(request: HttpRequest, user: UserLoginIn):
 def post(request: HttpRequest, user: CreateUser):
     # Check that none of the value fields are empty strings
     if user.firstName == '' or user.lastName == '' or user.email == '' or user.password == '':
-        return HTTPStatus.BAD_REQUEST, Error(message='Fields cannot be an empty str')
+        return HTTPStatus.BAD_REQUEST, Error(message='Fields cannot be an empty string')
 
     # Check if user with specified email already exists
     try:

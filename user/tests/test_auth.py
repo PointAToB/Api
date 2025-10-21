@@ -37,8 +37,10 @@ class UserAuthTest(TestCase):
 
         TestCase.assertEqual(self, res.status_code, HTTPStatus.OK, res.content)
 
-        refresh_token = res.json().get('refresh_token')
+        refresh_token = res.json().get('refresh')
         access_token = res.json().get('access_token')
+
+        print(refresh_token)
 
 
 
