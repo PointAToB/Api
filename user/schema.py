@@ -21,14 +21,22 @@ class RetrieveUser(Schema):
 
 # Update user response
 class UpdateUser(Schema):
-    firstName: Optional[str]
-    lastName: Optional[str]
-    email: Optional[EmailStr]
-    weight: Optional[int] # Stored in pounds.
-    height: Optional[int] # Stored in inches
-    birthDate: Optional[datetime]
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
+    email: Optional[EmailStr] = None
+    weight: Optional[int]  = None # Stored in pounds.
+    height: Optional[int]  = None # Stored in inches
+    birthDate: Optional[datetime] = None
 
 # Error response
 class Error(Schema):
     status: Optional[str] = "error"
     message: str
+
+class UserLoginOut(Schema):
+    access: str
+    refresh: str
+
+class UserLoginIn(Schema):
+    email: EmailStr
+    password: str
