@@ -2,3 +2,4 @@ venv
 .env
 Api.iml
 .idea/
+api/__pycache__/
