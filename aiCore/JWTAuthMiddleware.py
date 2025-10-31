@@ -11,9 +11,11 @@ class JWTAuthMiddleware(object):
 
         try:
             access_token = AccessToken(token=token)
-            user_id = access_token['user_id']
+            scope['user'] = access_token['user_id']
         except TokenError:
-            user_id = AnonymousUser()
+            scope['user'] = AnonymousUser()
+
+
 
 
 

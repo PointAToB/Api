@@ -1,20 +1,19 @@
 from http import HTTPStatus
-
 from django.contrib.auth import authenticate
 from ninja_jwt.authentication import JWTAuth
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest
 from ninja import Router
 from ninja_jwt.tokens import AccessToken, RefreshToken
 
 from .models import User
 from .schema import CreateUser, RetrieveUser, UpdateUser, Error, UserLoginIn, UserLoginOut
 
-router = Router()
+user_router = Router()
 
 # Predefined Endpoints: token/pair (Initial Authentication) , token/refresh (Refresh Access Token), token/verify (Verify token is not expired)
 
 # Custom login endpoint
-@router.post('login', response={
+@user_router.post('login', response={
     HTTPStatus.OK: UserLoginOut,
     HTTPStatus.NOT_FOUND: Error,
     HTTPStatus.BAD_REQUEST: Error,
@@ -35,7 +34,7 @@ def login(request: HttpRequest, user: UserLoginIn):
 
 
 # Create User
-@router.post('user', response={
+@user_router.post('user', response={
     HTTPStatus.OK: RetrieveUser,
     HTTPStatus.CONFLICT: Error,
     HTTPStatus.BAD_REQUEST: Error
@@ -57,7 +56,7 @@ def post(request: HttpRequest, user: CreateUser):
 
 
 # Retrieve User
-@router.get('user', auth=JWTAuth(), response={
+@user_router.get('user', auth=JWTAuth(), response={
     HTTPStatus.OK: RetrieveUser,
     HTTPStatus.NOT_FOUND: Error
 })
@@ -70,7 +69,7 @@ def get(request: HttpRequest):
 
 
 # Update User
-@router.put('user', auth=JWTAuth(), response={
+@user_router.put('user', auth=JWTAuth(), response={
     HTTPStatus.OK: None,
     HTTPStatus.NOT_FOUND: Error,
     HTTPStatus.BAD_REQUEST: Error
@@ -89,7 +88,7 @@ def put(request: HttpRequest, fields: UpdateUser):
 
 
 # Delete User
-@router.delete('user', auth=JWTAuth(), response={
+@user_router.delete('user', auth=JWTAuth(), response={
     HTTPStatus.OK: None,
     HTTPStatus.NOT_FOUND: Error,
 })
