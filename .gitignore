@@ -2,5 +2,13 @@ venv
 .env
 Api.iml
 .idea/
-__pycache__/
-*.py[cod]
+api/__pycache__/
+api/migrations/__pycache__/
+exerciseList/__pycache__/
+exerciseList/migrations/__pycache__/
+nutritionLog/__pycache__/
+nutritionLog/migrations/__pycache__/
+user/__pycache__/
+user/migrations/__pycache__/
+workoutLog/__pycache__/
+workoutLog/migrations/__pycache__/
