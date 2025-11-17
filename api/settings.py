@@ -20,7 +20,8 @@ SECRET_KEY = 'django-insecure-m$6%*hyqy5$j!l3)m8-sf2aia-qrk0d7bvxy)w7x09^&gpjsf*
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    '10.0.2.2'
+    '10.0.2.2',
+    '192.168.0.207'
 ]
 
 
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'user',
+    'nutritionLog',
     'ninja_extra',
 ]
 
@@ -72,8 +74,14 @@ ASGI_APPLICATION = 'api.asgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    },
+    'user': dj_database_url.config(default=os.environ.get('DATABASE_URL'))
 }
+
+DATABASE_ROUTERS = ['api.db_router.DbRouter']
 
 
 AUTH_USER_MODEL = 'user.User'
